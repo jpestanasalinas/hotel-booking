@@ -2,6 +2,7 @@ package application;
 
 import domain.AlreadyExistingHotelException;
 import domain.Hotel;
+import domain.NonExistentHotelException;
 import infrastructure.HotelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,9 @@ public class HotelService {
     }
 
     void addHotel(int hotelId, String hotelName) {
-        repository.findById(hotelId)
-                .ifPresent(s -> {
-                    throw new AlreadyExistingHotelException(hotelId);
-                });
+        repository.findById(hotelId).ifPresent(s -> {
+            throw new AlreadyExistingHotelException(hotelId);
+        });
 
         Hotel hotel = new Hotel(hotelId, hotelName);
 
@@ -28,7 +28,9 @@ public class HotelService {
 
     }
 
-    //void setRoom(<?> hotelId, <?> number, <?> roomType);
+    void setRoom(int hotelId, int number, int roomType) {
+        repository.findById(hotelId).orElseThrow(() -> new NonExistentHotelException(hotelId));
+    }
 
     //<?> findHotelBy(<?> hotelId);
 

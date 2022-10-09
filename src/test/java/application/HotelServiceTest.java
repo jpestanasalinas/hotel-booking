@@ -2,6 +2,7 @@ package application;
 
 import domain.AlreadyExistingHotelException;
 import domain.Hotel;
+import domain.NonExistentHotelException;
 import infrastructure.HotelRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class HotelServiceTest {
 
+    public static final int HOTEL_ID = 1;
+    public static final String HOTEL_NAME = "hotel1";
     @InjectMocks
     private HotelService service;
     @Mock
@@ -25,14 +28,11 @@ class HotelServiceTest {
 
     @Test
     public void when_add_hotel_which_id_already_exists_should_throw_exception() {
-        int hotelId = 1;
-        String hotelName = "hotel1";
-
-        when(repository.findById(hotelId)).thenReturn(Optional.of(new Hotel(hotelId, hotelName)));
+        when(repository.findById(HOTEL_ID)).thenReturn(Optional.of(new Hotel(HOTEL_ID, HOTEL_NAME)));
 
         AlreadyExistingHotelException exception = assertThrows(AlreadyExistingHotelException.class, () -> {
-            service.addHotel(hotelId, hotelName);
-            service.addHotel(hotelId, hotelName);
+            service.addHotel(HOTEL_ID, HOTEL_NAME);
+            service.addHotel(HOTEL_ID, HOTEL_NAME);
         });
 
         assertEquals("hotel with id 1 was already registered", exception.getMessage());
@@ -40,15 +40,22 @@ class HotelServiceTest {
 
     @Test
     public void when_add_a_valid_hotel_should_save_it() {
-        int hotelId = 1;
-        String hotelName = "hotel1";
+        when(repository.findById(HOTEL_ID)).thenReturn(Optional.empty());
 
-        when(repository.findById(hotelId)).thenReturn(Optional.empty());
-
-        service.addHotel(hotelId, hotelName);
+        service.addHotel(HOTEL_ID, HOTEL_NAME);
 
         verify(repository, times(1)).save(any());
     }
 
+    @Test
+    public void when_set_room_to_nonexistent_hotel_then_throws_exception() {
+        when(repository.findById(HOTEL_ID)).thenReturn(Optional.empty());
+
+        NonExistentHotelException exception = assertThrows(NonExistentHotelException.class, () -> {
+            service.setRoom(HOTEL_ID, 2, 1);
+        });
+
+        assertEquals("hotel with id 1 does not exist", exception.getMessage());
+    }
 
 }
