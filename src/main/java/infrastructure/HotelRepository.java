@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface HotelRepository {
 
     Optional<Hotel> findById(int hotelId);
+
+    void save(Hotel hotel);
 }

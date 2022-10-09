@@ -13,13 +13,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class HotelServiceTest {
 
     @InjectMocks
-    private HotelService hotelService;
+    private HotelService service;
     @Mock
     private HotelRepository repository;
 
@@ -28,14 +28,27 @@ class HotelServiceTest {
         int hotelId = 1;
         String hotelName = "hotel1";
 
-        when(repository.findById(hotelId)).thenReturn(Optional.of(new Hotel()));
+        when(repository.findById(hotelId)).thenReturn(Optional.of(new Hotel(hotelId, hotelName)));
 
         AlreadyExistingHotelException exception = assertThrows(AlreadyExistingHotelException.class, () -> {
-            hotelService.addHotel(hotelId, hotelName);
-            hotelService.addHotel(hotelId, hotelName);
+            service.addHotel(hotelId, hotelName);
+            service.addHotel(hotelId, hotelName);
         });
 
         assertEquals("hotel with id 1 was already registered", exception.getMessage());
     }
+
+    @Test
+    public void when_add_a_valid_hotel_should_save_it() {
+        int hotelId = 1;
+        String hotelName = "hotel1";
+
+        when(repository.findById(hotelId)).thenReturn(Optional.empty());
+
+        service.addHotel(hotelId, hotelName);
+
+        verify(repository, times(1)).save(any());
+    }
+
 
 }
