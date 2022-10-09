@@ -18,7 +18,7 @@ public class HotelService {
     void addHotel(int hotelId, String hotelName) {
         repository.findById(hotelId)
                 .ifPresent(s -> {
-                    throw new AlreadyExistingHotelException();
+                    throw new AlreadyExistingHotelException(hotelId);
                 });
 
 

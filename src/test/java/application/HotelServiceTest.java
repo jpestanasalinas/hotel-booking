@@ -25,11 +25,14 @@ class HotelServiceTest {
 
     @Test
     public void when_add_hotel_which_id_already_exists_should_throw_exception() {
-        when(repository.findById(1)).thenReturn(Optional.of(new Hotel()));
+        int hotelId = 1;
+        String hotelName = "hotel1";
+
+        when(repository.findById(hotelId)).thenReturn(Optional.of(new Hotel()));
 
         AlreadyExistingHotelException exception = assertThrows(AlreadyExistingHotelException.class, () -> {
-            hotelService.addHotel(1, "hotel1");
-            hotelService.addHotel(1, "hotel1");
+            hotelService.addHotel(hotelId, hotelName);
+            hotelService.addHotel(hotelId, hotelName);
         });
 
         assertEquals("hotel with id 1 was already registered", exception.getMessage());
