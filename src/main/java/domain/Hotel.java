@@ -5,7 +5,7 @@ public class Hotel {
     private final int id;
     private final String name;
 
-    private Rooms rooms;
+    private final Rooms rooms;
 
     public Hotel(int id, String name) {
         this.id = id;

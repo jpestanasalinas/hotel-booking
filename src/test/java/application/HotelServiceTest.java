@@ -51,9 +51,8 @@ class HotelServiceTest {
     public void when_set_room_of_nonexistent_hotel_then_throws_exception() {
         when(repository.findById(HOTEL_ID)).thenReturn(Optional.empty());
 
-        NonExistentHotelException exception = assertThrows(NonExistentHotelException.class, () -> {
-            service.setRoom(HOTEL_ID, 2, 1);
-        });
+        NonExistentHotelException exception = assertThrows(NonExistentHotelException.class,
+                () -> service.setRoom(HOTEL_ID, 2, 1));
 
         assertEquals("hotel with id 1 does not exist", exception.getMessage());
     }
