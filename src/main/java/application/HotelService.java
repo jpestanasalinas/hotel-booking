@@ -38,6 +38,8 @@ public class HotelService {
         repository.saveOrUpdate(hotel);
     }
 
-    //<?> findHotelBy(<?> hotelId);
+    Hotel findHotelBy(int hotelId) {
+        return repository.findById(hotelId).orElseThrow(() -> new NonExistentHotelException(hotelId));
+    }
 
 }

@@ -5,6 +5,7 @@ import domain.Hotel;
 import domain.NonExistentHotelException;
 import domain.Room;
 import infrastructure.HotelRepository;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -83,5 +85,20 @@ class HotelServiceTest {
         assertTrue(hotel.rooms().contains(room));
         assertEquals(room, hotel.rooms().get(0));
         verify(repository, times(2)).saveOrUpdate(any());
+    }
+
+    @Test
+    public void when_find_by_id_then_returns_all_information_about_rooms() {
+        Hotel hotel = new Hotel(HOTEL_ID, HOTEL_NAME);
+        Room room2 = new Room(2, 2);
+        Room room3 = new Room(3, 3);
+        hotel.setRoom(room2);
+        hotel.setRoom(room3);
+
+        when(repository.findById(HOTEL_ID)).thenReturn(Optional.of(hotel));
+
+        Hotel foundHotel = service.findHotelBy(HOTEL_ID);
+
+        MatcherAssert.assertThat(foundHotel.rooms().size(), is(2));
     }
 }
